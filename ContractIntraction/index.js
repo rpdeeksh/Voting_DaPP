@@ -10,6 +10,7 @@ const candidateIdInput = document.getElementById("candidateIdInput");
 const getCandidateButton = document.getElementById("getCandidateButton");
 const candidateInfoDiv = document.getElementById("candidateInfo");
 const intro = document.getElementById("intro");
+const main_head = document.getElementById("main_heading");
 
 
 let signer;
@@ -53,6 +54,8 @@ async function vote(candidateId) {
                 const transactionResponse = await contract.vote(candidateId);
                 await listenForTransactionMine(transactionResponse);
                 alert(`Sucessfuly casted vote to ${candidateId}`);
+                voteButton.innerHTML = "You have already voted"
+                voteButton.disabled = true;
             }
         } catch (error) {
             console.log(error);
@@ -159,17 +162,51 @@ getCandidateButton.onclick = () => {
         alert("Invalid candidate ID. Please enter a valid positive integer.");
     }
 };
+async function checkAndPublishResults() {
+    try {
+        const remainingTime = await contract.getRemainingTime();
+        if (remainingTime <= 0) {
+            const results = await contract.publishResults();
+            main_head.innerHTML = "Elections ended <br>🎊 Results are : ";
+            console.log("Results published:", results);
+            voteButton.style.display = 'none';
+            countdownDiv.style.display = 'none';
+
+            // Format results as an HTML table
+            const formattedResults = `<table border="1">
+                <tr>
+                    <th>Name</th>
+                    <th>Vote Count</th>
+                </tr>
+                ${results.split("\n").map(row => `
+                    <tr>
+                        ${row.split(":").map(cell => `<td>${cell.trim()}</td>`).join("")}
+                    </tr>
+                `).join("")}
+            </table>`;
+            
+            resultsDiv.innerHTML = formattedResults;
+        }
+    } catch (error) {
+        console.error("Error publishing results:", error);
+        // Handle the error, such as displaying an error message to the user
+    }
+}
+
+
 function updateCountdown(timeInSeconds) {
     const countdownElement = document.getElementById("countdown");
 
     const hours = Math.floor(timeInSeconds / 3600);
     const minutes = Math.floor((timeInSeconds % 3600) / 60);
     const seconds = timeInSeconds % 60;
-
+    // console.log(timeInSeconds)
     countdownElement.textContent = `Countdown: ${hours}h ${minutes}m ${seconds}s`;
-    setTimeout(() => {
-        if (timeInSeconds > 0) {
+    setTimeout(async () => {
+        if (timeInSeconds >= 0) {
             updateCountdown(timeInSeconds - 1);
+        } else {
+            await checkAndPublishResults(); // Call checkAndPublishResults when time is zero
         }
     }, 1000);
 }

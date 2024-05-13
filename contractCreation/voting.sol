@@ -30,7 +30,7 @@ contract VotingSystem {
                 voteCount: 0
             }));
         }
-        publishTime = block.timestamp + (_hoursAfterVoting * 1 hours);
+        publishTime = block.timestamp + (_hoursAfterVoting * 1 minutes);
     }
 
     // Function to vote for a candidate
