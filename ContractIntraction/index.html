@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Voting System</title>
+        <link rel="stylesheet" href="style.css" />
+    </head>
+    <body>
+        <div class="intro" id="intro">
+            <h1>Welcome to our voting System.</h1>
+            <h3>Please connect your Web3 Wallet !!!</h3>
+            <button id="connectButton">Connect Wallet</button>
+        </div>
+
+        <div class="container" id="votingContainer" style="display: none">
+            <h1>Voting System</h1>
+            <button id="voteButton" disabled>Vote</button>
+            <div id="results"></div>
+            <div id="countdown"></div>
+            <div>
+                <input type="number" id="candidateIdInput" placeholder="Enter Candidate ID" />
+                <button id="getCandidateButton">Get Candidate Info</button>
+                <div id="candidateInfo"></div>
+            </div>
+            <div class="loader"></div>
+        </div>
+
+        <footer>
+            <p>Made with ❤️ by MAD { Mohith, Aniket, Deekshith }</p>
+        </footer>
+
+        <script type="module" src="./index.js"></script>
+    </body>
+</html>
